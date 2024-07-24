@@ -43,7 +43,241 @@ java -jar .\build\libs\minesweeper-kotlin-0.0.1-SNAPSHOT-all.jar
 * [Troubleshooting: no tests have run](https://plugins.jetbrains.com/plugin/10081-jetbrains-academy/docs/troubleshooting-guide.html#no_tests_have_run)
 * [discord markdown live previewer](https://discord-markdown-live-previewer.vercel.app/)
 
-## Stage 5/5 : 
+## Stage 5/5 : [Errors!](https://hyperskill.org/projects/138/stages/739/implement)
+### Description
+Running a cinema theatre is no easy business. To help our friends, let's add statistics to your program. The stats will show the current income, total income, the number of available seats, and the percentage of occupancy.
+
+In addition, our friends asked you to take care of a small inconvenience: it's not good when a user can buy a ticket that has already been purchased by another user. Let's fix this!
+
+### Issues / Errors during Solve in IDE on Hyperskill
+#### root cause
+* the way I was calculating percentage was incorrect, it should be based on the formula:
+```
+   percentage (%) = (# tickets sold) * 100.0 / (total # of seats)
+```
+#### Error
+```courseignore
+Wrong answer in test #6
+
+Wrong percentage!
+Found: 4.17%
+Expected: 3.70%
+ -----
+Please find below the output of your program during this failed test.
+Note that the '>' character indicates the beginning of the input line.
+
+---
+
+Enter the number of rows:
+> > 9
+Enter the number of seats in each row:
+> > 9
+1. Show the seats
+2. Buy a ticket
+3. Statistics 
+0. Exit
+> 3
+
+Number of purchased tickets: 0
+Percentage: 0.00%
+Current income: $0
+Total income: $720
+
+1. Show the seats
+2. Buy a ticket
+3. Statistics 
+0. Exit
+> 2
+
+Enter a row number:
+> > 1
+Enter a seat number in that row:
+> > 7
+
+Ticket price: $10
+
+1. Show the seats
+2. Buy a ticket
+3. Statistics 
+0. Exit
+> 2
+
+Enter a row number:
+> > 1
+Enter a seat number in that row:
+> > 8
+
+Ticket price: $10
+
+1. Show the seats
+2. Buy a ticket
+3. Statistics 
+0. Exit
+> 2
+
+Enter a row number:
+> > 1
+Enter a seat number in that row:
+> > 9
+
+Ticket price: $10
+
+1. Show the seats
+2. Buy a ticket
+3. Statistics 
+0. Exit
+> 3
+
+Number of purchased tickets: 3
+Percentage: 4.17%
+Current income: $30
+Total income: $720
+
+1. Show the seats
+2. Buy a ticket
+3. Statistics 
+0. Exit
+
+java.lang.AssertionError: Wrong answer in test #6
+
+Wrong percentage!
+Found: 4.17%
+Expected: 3.70%
+ 
+
+```
+
+### Objectives
+Now your menu should look like this:
+```
+1. Show the seats
+2. Buy a ticket
+3. Statistics
+0. Exit
+```
+When the item _**Statistics**_ is chosen, your program should print the following information:
+
+* The number of purchased tickets;
+* The number of purchased tickets represented as a percentage. Percentages should be rounded to 2 decimal places;
+* Current income;
+* The total income that shows how much money the theatre will get if all the tickets are sold.
+
+The rest of the menu items should work the same way as before, except the item _**Buy a ticket**_ shouldn't allow a 
+user to buy a ticket that has already been purchased.
+
+If a user chooses an already taken seat, print _**That ticket has already been purchased!**_ and ask them to enter 
+different seat coordinates until they pick an available seat. Of course, you shouldn't allow coordinates that are 
+out of bounds. If this happens, print _**Wrong input!**_ and ask to enter different seat coordinates until the user picks 
+an available seat.
+
+Please note that you need to output percentages with 2 digits after the separator. For this output, you can do this:
+```
+val percentage = 0.0
+val formatPercentage = "%.2f".format(percentage)
+print(formatPercentage) // 0.00
+```
+### Examples
+The greater-than symbol followed by a space (> ) represents the user input. Note that it's not part of the input.
+```
+Enter the number of rows:
+> 6
+Enter the number of seats in each row:
+> 6
+
+1. Show the seats
+2. Buy a ticket
+3. Statistics
+0. Exit
+> 3
+
+Number of purchased tickets: 0
+Percentage: 0.00%
+Current income: $0
+Total income: $360
+
+1. Show the seats
+2. Buy a ticket
+3. Statistics
+0. Exit
+> 2
+
+Enter a row number:
+> 1
+Enter a seat number in that row:
+> 1
+
+Ticket price: $10
+
+1. Show the seats
+2. Buy a ticket
+3. Statistics
+0. Exit
+> 3
+
+Number of purchased tickets: 1
+Percentage: 2.78%
+Current income: $10
+Total income: $360
+
+1. Show the seats
+2. Buy a ticket
+3. Statistics
+0. Exit
+> 2
+
+Enter a row number:
+> 1
+Enter a seat number in that row:
+> 1
+
+That ticket has already been purchased!
+
+Enter a row number:
+> 10
+Enter a seat number in that row:
+> 20
+
+Wrong input!
+
+Enter a row number:
+> 4
+Enter a seat number in that row:
+> 4
+
+Ticket price: $10
+
+1. Show the seats
+2. Buy a ticket
+3. Statistics
+0. Exit
+> 1
+
+Cinema:
+1 2 3 4 5 6
+1 B S S S S S
+2 S S S S S S
+3 S S S S S S
+4 S S S B S S
+5 S S S S S S
+6 S S S S S S
+
+1. Show the seats
+2. Buy a ticket
+3. Statistics
+0. Exit
+> 3
+
+Number of purchased tickets: 2
+Percentage: 5.56%
+Current income: $20
+Total income: $360
+
+1. Show the seats
+2. Buy a ticket
+3. Statistics
+0. Exit
+> 0
+```
 ## Stage 4/5 : [Menu, please!](https://hyperskill.org/projects/138/stages/738/implement)
 ### Description
 The theatre is getting popular, and the customers started complaining that it's not practical that the program stops after buying one ticket. Let's add a menu that will allow them to buy tickets and display the current state of the seating arrangement when needed.

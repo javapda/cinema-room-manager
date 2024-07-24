@@ -1,9 +1,38 @@
 package com.javapda.cinemaroommanager
 
-data class Seat(val row: Int, val seatNumber: Int)
-class CinemaRoom(val rows: Int = 7, val seatsPerRow: Int = 8) {
+data class Seat(val row: Int, val seatNumber: Int, var cost: Int = 0) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Seat
+
+        if (row != other.row) return false
+        if (seatNumber != other.seatNumber) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = row
+        result = 31 * result + seatNumber
+        return result
+    }
+}
+
+class CinemaRoom(private val rows: Int = 7, private val seatsPerRow: Int = 8) {
     fun seatCost(seat: Seat): Int =
         if (rows * seatsPerRow <= 60 || seat.row <= rows / 2) 10 else 8
+
+    fun totalIncome(): Int {
+        var sum = 0
+        (1..rows).forEach { rowNumber ->
+            (1..seatsPerRow).forEach { seatNumber ->
+                sum += seatCost(Seat(rowNumber, seatNumber))
+            }
+        }
+        return sum
+    }
 
     fun renderRoom(reservedSeats: Set<Seat>) =
         buildString {
@@ -20,6 +49,12 @@ class CinemaRoom(val rows: Int = 7, val seatsPerRow: Int = 8) {
             }
 
         }
+
+    private fun isValidSeat(seat: Seat): Boolean =
+        seat.row in 1..rows && seat.seatNumber in 1..seatsPerRow
+
+    fun isInvalidSeat(seat: Seat): Boolean = !isValidSeat(seat)
+    fun numberOfSeats(): Int = rows * seatsPerRow
 
 }
 
@@ -77,7 +112,8 @@ class CinemaRoomManager(val rows: Int = 7, val seats: Int = 8) {
 
     }
 
-    fun stage4() {
+
+    fun stage5() {
         val reservedSeats = mutableSetOf<Seat>()
         print("Enter the number of rows:\n> ")
         val rows = readln().toInt()
@@ -89,6 +125,7 @@ class CinemaRoomManager(val rows: Int = 7, val seats: Int = 8) {
                 """
                 1. Show the seats
                 2. Buy a ticket
+                3. Statistics 
                 0. Exit
                 > 
             """.trimIndent()
@@ -100,20 +137,48 @@ class CinemaRoomManager(val rows: Int = 7, val seats: Int = 8) {
             println(cinemaRoom.renderRoom(reservedSeats))
         }
 
+        fun statistics() {
+            val currentIncome = reservedSeats.sumOf { seat -> seat.cost }
+            val totalIncome = cinemaRoom.totalIncome()
+            val numberOfPurchasedTickets = reservedSeats.size
+            val percentage = reservedSeats.size.toDouble() * 100.0 / cinemaRoom.numberOfSeats().toDouble()
+//            val percentage = currentIncome.toDouble()*100.0/totalIncome.toDouble()
+            val formatPercentage = "%.2f".format(percentage)
+            println(
+                """
+                Number of purchased tickets: $numberOfPurchasedTickets
+                Percentage: $formatPercentage%
+                Current income: ${'$'}$currentIncome
+                Total income: ${'$'}$totalIncome
+                
+            """.trimIndent()
+            )
+        }
+
         fun buyATicket() {
             print("Enter a row number:\n> ")
             val rowNumber = readln().toInt()
             print("Enter a seat number in that row:\n> ")
             val seatNumber = readln().toInt()
             val seat = Seat(rowNumber, seatNumber)
-            println(
-                """
+            if (cinemaRoom.isInvalidSeat(seat)) {
+                println("\nWrong input!\n")
+                buyATicket()
+            } else if (seat in reservedSeats) {
+                println("\nThat ticket has already been purchased!\n")
+                buyATicket()
+            } else {
+                seat.cost = cinemaRoom.seatCost(seat)
+                println(
+                    """
             
-            Ticket price: ${'$'}${cinemaRoom.seatCost(seat)}
+            Ticket price: ${'$'}${seat.cost}
             
         """.trimIndent()
-            )
-            reservedSeats.add(seat)
+                )
+
+                reservedSeats.add(seat)
+            }
         }
 
         var response = ""
@@ -123,6 +188,7 @@ class CinemaRoomManager(val rows: Int = 7, val seats: Int = 8) {
             when (response) {
                 "1" -> showTheSeats()
                 "2" -> buyATicket()
+                "3" -> statistics()
                 "0" -> {}
                 else -> {
                     println("Warning: do not know how to handle input '$response'")
@@ -135,5 +201,5 @@ class CinemaRoomManager(val rows: Int = 7, val seats: Int = 8) {
 }
 
 fun main() {
-    CinemaRoomManager().stage4()
+    CinemaRoomManager().stage5()
 }
