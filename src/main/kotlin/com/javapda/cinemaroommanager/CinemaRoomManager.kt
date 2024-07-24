@@ -77,31 +77,63 @@ class CinemaRoomManager(val rows: Int = 7, val seats: Int = 8) {
 
     }
 
-    fun stage3() {
+    fun stage4() {
+        val reservedSeats = mutableSetOf<Seat>()
         print("Enter the number of rows:\n> ")
         val rows = readln().toInt()
         print("Enter the number of seats in each row:\n> ")
         val seatsPerRow = readln().toInt()
         val cinemaRoom = CinemaRoom(rows, seatsPerRow)
-        println()
-        println(cinemaRoom.renderRoom(setOf()))
-        print("Enter a row number:\n> ")
-        val rowNumber = readln().toInt()
-        print("Enter a seat number in that row:\n> ")
-        val seatNumber = readln().toInt()
-        val seat = Seat(rowNumber, seatNumber)
-        println(
-            """
+        fun menu(): String {
+            print(
+                """
+                1. Show the seats
+                2. Buy a ticket
+                0. Exit
+                > 
+            """.trimIndent()
+            )
+            return readln().trim()
+        }
+
+        fun showTheSeats() {
+            println(cinemaRoom.renderRoom(reservedSeats))
+        }
+
+        fun buyATicket() {
+            print("Enter a row number:\n> ")
+            val rowNumber = readln().toInt()
+            print("Enter a seat number in that row:\n> ")
+            val seatNumber = readln().toInt()
+            val seat = Seat(rowNumber, seatNumber)
+            println(
+                """
             
             Ticket price: ${'$'}${cinemaRoom.seatCost(seat)}
             
         """.trimIndent()
-        )
-        println(cinemaRoom.renderRoom(setOf(seat)))
+            )
+            reservedSeats.add(seat)
+        }
+
+        var response = ""
+        while (response != "0") {
+            response = menu()
+            println()
+            when (response) {
+                "1" -> showTheSeats()
+                "2" -> buyATicket()
+                "0" -> {}
+                else -> {
+                    println("Warning: do not know how to handle input '$response'")
+                }
+            }
+        }
+
     }
 
 }
 
 fun main() {
-    CinemaRoomManager().stage3()
+    CinemaRoomManager().stage4()
 }
