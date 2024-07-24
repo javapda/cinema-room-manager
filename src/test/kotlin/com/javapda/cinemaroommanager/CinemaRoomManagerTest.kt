@@ -3,12 +3,21 @@ package com.javapda.cinemaroommanager
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.MethodSource
 
 class CinemaRoomManagerTest {
-    var cinemaRoomManager = CinemaRoomManager()
+    private var cinemaRoomManager = CinemaRoomManager()
 
     @BeforeEach
     fun setUp() {
+    }
+
+    @ParameterizedTest
+    @MethodSource("soldPracticeData")
+    fun testSoldPractice(data:Triple<Int,Int,Int>) {
+        val (rows,seatsPerRow,expectedTotal) = data
+        assertEquals(expectedTotal,cinemaRoomManager.calculateRevenue(rows,seatsPerRow))
     }
 
     @Test
@@ -34,6 +43,17 @@ class CinemaRoomManagerTest {
         assertEquals(3, 3)
         assertThrows(IllegalArgumentException::class.java) {
             throw IllegalArgumentException("for testing")
+        }
+    }
+
+    companion object {
+        @JvmStatic
+        fun soldPracticeData(): List<Triple<Int,Int,Int>> {
+            return listOf(
+                Triple(4,5, 200),
+                Triple(8,9, 648),
+                Triple(9,7, 560),
+            )
         }
     }
 }
