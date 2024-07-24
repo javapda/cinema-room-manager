@@ -1,5 +1,28 @@
 package com.javapda.cinemaroommanager
 
+data class Seat(val row: Int, val seatNumber: Int)
+class CinemaRoom(val rows: Int = 7, val seatsPerRow: Int = 8) {
+    fun seatCost(seat: Seat): Int =
+        if (rows * seatsPerRow <= 60 || seat.row <= rows / 2) 10 else 8
+
+    fun renderRoom(reservedSeats: Set<Seat>) =
+        buildString {
+            appendLine("Cinema:")
+            append("  ")
+            appendLine((1..seatsPerRow).joinToString(" "))
+            (1..rows).forEach { rowNumber ->
+                append(rowNumber).append(" ")
+                (1..seatsPerRow).forEach { seatNumber ->
+                    append(if (Seat(rowNumber, seatNumber) in reservedSeats) "B" else "S")
+                    if (seatNumber < seatsPerRow) append(" ")
+                }
+                appendLine()
+            }
+
+        }
+
+}
+
 /**
  * Cinema room manager
  *
@@ -15,6 +38,10 @@ class CinemaRoomManager(val rows: Int = 7, val seats: Int = 8) {
         (1..rows).forEach { rowNumber ->
             appendLine("$rowNumber${" S".repeat(seats)}")
         }
+    }
+
+    internal fun showSeats() {
+
     }
 
     fun stage1() {
@@ -50,21 +77,31 @@ class CinemaRoomManager(val rows: Int = 7, val seats: Int = 8) {
 
     }
 
-    fun stage2() {
+    fun stage3() {
         print("Enter the number of rows:\n> ")
         val rows = readln().toInt()
         print("Enter the number of seats in each row:\n> ")
         val seatsPerRow = readln().toInt()
+        val cinemaRoom = CinemaRoom(rows, seatsPerRow)
+        println()
+        println(cinemaRoom.renderRoom(setOf()))
+        print("Enter a row number:\n> ")
+        val rowNumber = readln().toInt()
+        print("Enter a seat number in that row:\n> ")
+        val seatNumber = readln().toInt()
+        val seat = Seat(rowNumber, seatNumber)
         println(
             """
-            Total income:
-            $${calculateRevenue(rows, seatsPerRow)}
+            
+            Ticket price: ${'$'}${cinemaRoom.seatCost(seat)}
+            
         """.trimIndent()
         )
-
+        println(cinemaRoom.renderRoom(setOf(seat)))
     }
+
 }
 
 fun main() {
-    CinemaRoomManager().stage2()
+    CinemaRoomManager().stage3()
 }
